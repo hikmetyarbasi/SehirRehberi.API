@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using SehirRehberi.API.Data;
 using SehirRehberi.API.Dto;
+using SehirRehberi.API.Models;
 
 namespace SehirRehberi.API.Controllers
 {
@@ -26,9 +28,35 @@ namespace SehirRehberi.API.Controllers
         public ActionResult GetCities()
         {
             var cities = _repository.GetCities();
-            var cityForDtos = _mapper.Map<List<CityListForDto>>(cities);
+            var cityForReturn = _mapper.Map<List<CityListForDto>>(cities);
 
-;            return Ok(cityForDtos);
+            ; return Ok(cityForReturn);
+        }
+        [HttpPost]
+        [Route("add")]
+        public ActionResult Add([FromBody]City city)
+        {
+            _repository.Add(city);
+            _repository.SaveAll();
+            return Ok(city);
+        }
+
+
+        [HttpGet]
+        [Route("detail")]
+        public ActionResult GetCityById(int id)
+        {
+            var city = _repository.GetCityById(id);
+            var cityDetailForReturn = _mapper.Map<CityDetailForDto>(city);
+            return Ok(cityDetailForReturn);
+        }
+
+        [HttpGet]
+        [Route("photos")]
+        public ActionResult GetPhotosByCityId(int cityId)
+        {
+            var city = _repository.GetPhotoByCityId(cityId);
+            return Ok(city);
         }
     }
 }
